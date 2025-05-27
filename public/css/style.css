@@ -42,3 +42,22 @@ button {
     transition: background-color 0.3s ease;
 
 }
+
+.container2 a {
+    font-size: 16px;
+    color: #0068b3;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.container2 a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+#errormsg {
+    
+    margin-top: 5px;
+    color: red;
+}
