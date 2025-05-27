@@ -1,0 +1,70 @@
+
+.container {
+    max-width: auto;
+    padding: 20px;
+    height: 100vh;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  
+  form {
+    display: flex;
+    gap: 15px;
+  }
+  
+ 
+  label {
+    font-weight: 600;
+    color: #333;
+    font-size: 16px;
+    margin-top: 6px;
+  }
+  
+  
+  input,
+  select {
+    padding: 10px;
+    font-size: 14px;
+    border: 1.5px solid #ccc;
+    border-radius: 5px;
+  }
+  
+ 
+  button {
+    padding: 12px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .delete-btn {
+    padding: 7px;
+    font-size: 12px;
+    margin-left: 3px;
+    background-color: #ff0800;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  
+  
+  .list {
+    margin-top: 30px;
+    padding-left: 20px;
+    list-style-type: disc;
+    color: #555;
+  }
+  
+  .list li {
+    margin-bottom: 8px;
+    font-size: 15px;
+  }
+  

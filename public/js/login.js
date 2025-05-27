@@ -16,6 +16,8 @@ function handleLogin(event){
         
         event.target.email.value = "";
         event.target.password.value = "";
+
+        window.location.href = "/expense";
     }).catch((error)=>{
          if(error.response.data.message === "user not found"){
             errorDiv.textContent = "User Not Exist";
