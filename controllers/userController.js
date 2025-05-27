@@ -1,4 +1,5 @@
 const db = require('../util/db-connection');
+const bcrypt = require('bcrypt');
 const Users = require('../models/users')
 const path = require('path');
 
@@ -10,13 +11,14 @@ const postUserDetails = async (req,res) =>{
    
     try{
         const{name,email,password} = req.body;
-        let user = await Users.findAll({where : {email : email}});
+        let user = await Users.findOne({where : {email : email}});
 
-        if(user.length === 0){
+        if(!user){
+            const hashedPassword = await bcrypt.hash(password,10);
             user = await Users.create({
                 name : name,
                 email: email,
-                password : password
+                password : hashedPassword
             })
             res.status(201).json({message:"user created successfully",user});
         }
@@ -44,11 +46,14 @@ const getUserDetails = async (req,res) => {
             return res.status(404).json({message:"user not found"});
         }
 
-        if(user.password != password){
+        const isMatch = await bcrypt.compare(password,user.password);
+
+        if(!isMatch){
             return res.status(401).json({message:"Incorrect Password"});
         }
         
-            res.status(200).json({message:"user found succcessfully",user});
+        res.status(200).json({message:"user found succcessfully",user});
+        
     }catch(error){
          console.log(error);
          res.status(500).json({message:"internal server error"});
