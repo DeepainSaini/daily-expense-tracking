@@ -1,8 +1,11 @@
 const form = document.querySelector('form');
+const token = localStorage.getItem('token');
 
 window.addEventListener('DOMContentLoaded',(event)=>{
 
-    axios.get('http://localhost:3000'+"/expense/data").then((result)=>{
+ 
+
+    axios.get('http://localhost:3000'+"/expense/data",{headers : {'Authorization' : token}}).then((result)=>{
 
         result.data.forEach(expense => {
             displayUserOnScreen(expense);
@@ -25,9 +28,9 @@ form.addEventListener('submit',function(event){
         category : category
     };
 
-   
     
-    axios.post('http://localhost:3000'+"/expense",obj).then((result)=>{
+    
+    axios.post('http://localhost:3000'+"/expense",obj,{headers : {'Authorization' : token}}).then((result)=>{
         
         console.log(result.data.expnse);
         displayUserOnScreen(result.data.expnse);
@@ -61,10 +64,12 @@ function displayUserOnScreen(expenseDetails){
 
     list.appendChild(expenseItem);
 
+
+
     deleteBtn.addEventListener('click', (event)=>{
 
         const entryToDelete = event.target.parentElement.id;
-        axios.delete('http://localhost:3000'+`/expense/${entryToDelete}`).then((result)=>{
+        axios.delete('http://localhost:3000'+`/expense/${entryToDelete}`,{headers : {'Authorization' : token}}).then((result)=>{
                 list.removeChild(event.target.parentElement);
         }).catch((err)=>{
             console.log(err);

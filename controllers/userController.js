@@ -2,6 +2,7 @@ const db = require('../util/db-connection');
 const bcrypt = require('bcrypt');
 const Users = require('../models/users')
 const path = require('path');
+const jwt = require('jsonwebtoken');
 
 const getSignUpPage =  (req,res) => {
     res.sendFile(path.join(__dirname,'../','views','signup.html'));
@@ -36,6 +37,10 @@ const getLoginPage = (req,res) => {
     res.sendFile(path.join(__dirname,'../','views','login.html'));
 }
 
+function generateAccessToken(id){
+    return jwt.sign({userId : id},'secretkey');
+}
+
 const getUserDetails = async (req,res) => {
     
     try{
@@ -52,7 +57,7 @@ const getUserDetails = async (req,res) => {
             return res.status(401).json({message:"Incorrect Password"});
         }
         
-        res.status(200).json({message:"user found succcessfully",user});
+        res.status(200).json({message:"user found succcessfully",token : generateAccessToken(user.id)});
 
     }catch(error){
          console.log(error);
@@ -67,5 +72,5 @@ module.exports = {
     postUserDetails,
     getLoginPage,
     getUserDetails,
-    getExpensePage
+
 }

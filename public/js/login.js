@@ -16,6 +16,7 @@ function handleLogin(event){
         
         event.target.email.value = "";
         event.target.password.value = "";
+        localStorage.setItem('token', result.data.token);
 
         window.location.href = "/expense";
     }).catch((error)=>{

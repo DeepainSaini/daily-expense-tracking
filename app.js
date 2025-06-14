@@ -4,9 +4,9 @@ const app  = express();
 
 const userRoute = require('./routes/userRoutes.js');
 const expenseRoute = require('./routes/expenseRoutes.js');
-
-const userModel = require('./models/users.js');
-const expenseModel = require('./models/expenses.js');
+require('./models');
+// const userModel = require('./models/users.js');
+// const expenseModel = require('./models/expenses.js');
 
 
 

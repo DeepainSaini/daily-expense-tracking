@@ -15,7 +15,8 @@ const addExpense = async (req,res) => {
         const expnse = await Expenses.create({
             expense : expense,
             description : description,
-            category : category
+            category : category,
+            userId : req.user.id
         }) 
         res.status(200).json({message:'expense added',expnse});
     } catch(error){
@@ -27,7 +28,7 @@ const addExpense = async (req,res) => {
 const getExpenseData = async (req,res) =>{
 
     try{
-        const expense = await Expenses.findAll();
+        const expense = await Expenses.findAll({where : {userid : req.user.id}});
         res.status(200).json(expense);
     } catch(error){
         console.log(error);
@@ -41,8 +42,16 @@ const deleteExpense = async (req,res) =>{
     try{
         const {id} = req.params;
         const expense = await Expenses.destroy({
-            where : {id : id}
+            where : {
+                id : id,
+                userId : req.user.id
+            }
         });
+
+        
+        if (expense === 0) {
+            return res.status(403).json({ message: 'Not authorized or expense not found' });
+        }
         
         res.status(200).json({message:'entry deleted successfully'});
 
