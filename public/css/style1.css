@@ -42,6 +42,19 @@
     border-radius: 6px;
     cursor: pointer;
   }
+
+  .membership {
+    display: flex;
+    margin-left: auto;
+    margin-bottom: 30px;
+    padding: 12px;
+    font-size: 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
   
   .delete-btn {
     padding: 7px;

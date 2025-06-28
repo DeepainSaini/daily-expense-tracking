@@ -23,10 +23,13 @@
             </select>
             <button type="submit">Add Expense</button>
         </form>
-
+        <button id="payment-btn" class="membership" type="button">Buy Premium Membership</button>
         <ul class="list"></ul>
     </div>
-    <script src="/js/expense.js"></script>
+    <div id="cf-checkout"></div>
+    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.9.0/axios.min.js"></script>
+    <script src="/js/expense.js"></script>
+    <script src="/js/cashfree_self.js"></script>
 </body>
 </html>

@@ -4,6 +4,7 @@ const app  = express();
 
 const userRoute = require('./routes/userRoutes.js');
 const expenseRoute = require('./routes/expenseRoutes.js');
+const paymentRoute = require('./routes/paymentRoutes.js');
 require('./models');
 // const userModel = require('./models/users.js');
 // const expenseModel = require('./models/expenses.js');
@@ -11,10 +12,12 @@ require('./models');
 
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 app.use('/',userRoute);
 app.use('/',expenseRoute);
+app.use('/',paymentRoute);
 
 db.sync({force:true}).then(()=>{
     app.listen(3000,(err)=>{
