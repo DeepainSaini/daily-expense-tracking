@@ -29,7 +29,7 @@ exports.createOrder = async (
 
             "order_meta": {
                 "return_url": `http://localhost:3000/payment-status/${orderId}`,
-                "notify_url": "https://f40f-223-185-55-210.ngrok-free.app/webhook/cashfree",
+                "notify_url": "https://9e07-223-185-54-74.ngrok-free.app/webhook/cashfree",
                 "payment_methods": "cc,dc,upi"
             },
             

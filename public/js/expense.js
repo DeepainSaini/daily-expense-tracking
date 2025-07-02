@@ -1,9 +1,38 @@
 const form = document.querySelector('form');
 const token = localStorage.getItem('token');
 
+function checkPremiumStatus(){
+    
+    axios.get('http://localhost:3000'+"/premiumStatus",{headers : {'Authorization' : token}}).then((result)=>{
+        
+        console.log(result);
+        if(result.data.isPremium){
+            document.getElementById('premiumHeading').style.display = 'block';
+            document.getElementById('leaderboard').style.display = 'block';
+            
+            // document.getElementById('leaderboard').addEventListener('click',(event)=>{
+
+            //     axios.get('http://localhost:3000'+"/premium/showLeaderBoard").then((result)=>{
+
+            //         console.log(result);
+            //     }).catch((err)=>{
+            //         console.error("Failed to fetch leaderboard", err);
+            //     })
+            // })
+
+        } else {
+           
+            document.getElementById('payment-btn').style.display = 'block';
+          }
+
+    }).catch((err)=>{
+        console.log(err);
+    });
+}
+
 window.addEventListener('DOMContentLoaded',(event)=>{
 
- 
+    checkPremiumStatus();
 
     axios.get('http://localhost:3000'+"/expense/data",{headers : {'Authorization' : token}}).then((result)=>{
 
@@ -48,7 +77,7 @@ form.addEventListener('submit',function(event){
 function displayUserOnScreen(expenseDetails){
 
     
-    const list = document.querySelector('ul');
+    const list = document.querySelector('.list');
 
     const expenseItem = document.createElement('li');
     expenseItem.className = "expense-group-item";
@@ -80,9 +109,32 @@ function displayUserOnScreen(expenseDetails){
 }
 
 
+document.getElementById('leaderboard').addEventListener('click',(event)=>{
 
+    axios.get('http://localhost:3000'+"/premium/showLeaderBoard").then((result)=>{
+
+        document.getElementById('leaderHeading').style.display = 'block';
+       
+        result.data.forEach(leaderBoardData => {
+            displayLeaderBoard(leaderBoardData);
+        });
+
+    }).catch((err)=>{
+        console.error("Failed to fetch leaderboard", err);
+    })
+})
    
 
+function displayLeaderBoard(userDetails) {
+  
+    const list = document.querySelector('.leaderboard-list');
+
+    const user = document.createElement('li');
+    user.className = "user-group-item";
+    user.innerHTML = 'Name : ' + userDetails.name + '     Total Expense : ' + userDetails.totalExpense;
+
+    list.appendChild(user);
+}
     
 
     

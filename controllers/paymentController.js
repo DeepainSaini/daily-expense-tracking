@@ -1,7 +1,8 @@
 
 const db = require('../util/db-connection');
 const bcrypt = require('bcrypt');
-const Payments = require('../models/payment')
+const Payments = require('../models/payment');
+const Users = require('../models/users');
 const { createOrder,getPaymentStatus } = require('../services/cashfreeService');
 const path = require('path');
 const jwt = require('jsonwebtoken');
@@ -14,6 +15,9 @@ const processPayment = async (req,res) => {
     const orderCurrency = "INR";
     const customerId = "1";
     const customerPhone = "9999999999";
+    const token  = req.header('Authorization');
+    const decode = jwt.verify(token,'secretkey');
+    const userId = decode.userId;
 
     try{
         //create order in cashfree and generate payment session ID.
@@ -26,6 +30,8 @@ const processPayment = async (req,res) => {
             customerPhone
         );
 
+        console.log(paymentSessionId);
+
        //save payment details into database.
        await Payments.create({
           orderId,
@@ -33,6 +39,7 @@ const processPayment = async (req,res) => {
           orderAmount,
           orderCurrency,
           paymentStatus : "pending",
+          userId : userId
        });
 
        res.json({paymentSessionId,orderId});
@@ -48,20 +55,24 @@ const paymentStatus = async (req,res) => {
     const {orderId} = req.params;
     
     try{
+        
 
         const orderStatus = await getPaymentStatus(orderId);
+        console.log(orderStatus);
         await Payments.update(
             { paymentStatus: orderStatus },            
             { where: { orderId: orderId } }             
           );
-          const payment = await Payments.findOne({ where: { orderId } });
-        // res.json({orderStatus: orderStatus});
-        res.send(`
-            <h2>Payment Status</h2>
-            <p>Order ID: ${payment.orderId}</p>
-            <p>Status: ${payment.paymentStatus}</p>
-            <p>Amount: ₹${payment.orderAmount}</p>
-          `);
+        const payment = await Payments.findOne({ where: { orderId } });
+        console.log("ID",payment.userId);
+        await Users.update(
+            {isPremium : true},
+            {where : {id : payment.userId}}
+        );
+        
+        res.redirect('/expense');
+    
+        
 
     } catch(error){
         console.log(error);
@@ -75,7 +86,7 @@ const handleWebhook = async (req,res) => {
         const orderId = req.body.data.order.order_id;
         console.log(JSON.stringify(req.body, null, 2));
         const orderStatus = req.body.data.payment.payment_status;
-        
+        console.log("status",orderStatus);
 
         await Payments.update(
             
@@ -83,8 +94,15 @@ const handleWebhook = async (req,res) => {
             {where : {orderId}}
         );
 
+        if(orderStatus==="STATUS"){
+            await Payments.update(
+                { isPremium: true },
+                {where : {orderId}}
+            )
+        }
+
         console.log(`Webhook updated status for ${orderId}: ${orderStatus}`);
-        res.status(200).json({message : orderStatus});
+        res.status(200).json({orderStatus : orderStatus.toLowerCase()});
 
     } catch(error){
         console.error("Error in webhook:", error);

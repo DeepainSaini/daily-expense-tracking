@@ -9,7 +9,9 @@ document.getElementById("payment-btn").addEventListener("click", async () => {
         //fetch payment session id from backend.
         const response = await axios.post('http://localhost:3000'+"/pay");
 
-        const {paymentSessionId} = response.data;
+        const {paymentSessionId,orderId} = response.data;
+        localStorage.setItem("cf_order_id", orderId);
+
         
         //initialize checkout options.
         let checkoutOptions = {
@@ -18,7 +20,8 @@ document.getElementById("payment-btn").addEventListener("click", async () => {
         };
         
         //start checkout process.
-        await cashfree.checkout(checkoutOptions);
+       const result = await cashfree.checkout(checkoutOptions);
+       console.log(result);
 
         if(result.error){
             // This will be true whenever user clicks on close icon inside the modal or any error happens during the payment
@@ -35,10 +38,21 @@ document.getElementById("payment-btn").addEventListener("click", async () => {
             // This will be called whenever the payment is completed irrespective of transaction status
             console.log("Payment has been completed, Check for Payment Status");
             console.log(result.paymentDetails.paymentMessage);
+            const orderId = localStorage.getItem("cf_order_id");
 
             const response = await axios.get(`http://localhost:3000/payment-status/${orderId}`);
+            console.log(response);
+            const { orderStatus } = response.data;
 
-            alert("Your payment is" + response.data);
+            
+            if(orderStatus==="failed" || orderStatus==="failure"){
+                alert('payment failed');
+            }else if(orderStatus==="success"){
+                alert("payment success");
+            }
+
+          
+
         }
     
     } catch(error){

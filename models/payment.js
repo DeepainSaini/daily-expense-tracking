@@ -34,6 +34,8 @@ const Payments = sequelize.define('payment',{
         type : DataTypes.STRING,
         allowNull : false
     },
+
+    
 })
 
 module.exports = Payments;

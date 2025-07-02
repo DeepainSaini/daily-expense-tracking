@@ -1,6 +1,6 @@
 const db = require('../util/db-connection');
 const bcrypt = require('bcrypt');
-const Users = require('../models/users')
+const Users = require('../models/users');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 
@@ -65,6 +65,21 @@ const getUserDetails = async (req,res) => {
     }
 }
 
+const getPremiumStatus = async (req,res) => {
+
+    try{
+        console.log("USER:",req.user);
+        const isPremium = req.user.isPremium;
+
+        res.status(200).json({isPremium : isPremium});
+
+
+    } catch(error){
+        console.log(error);
+        res.status(500).json({message : "Internal server error"});
+    }
+}
+
 
 
 module.exports = {
@@ -72,5 +87,6 @@ module.exports = {
     postUserDetails,
     getLoginPage,
     getUserDetails,
+    getPremiumStatus
 
 }

@@ -23,10 +23,16 @@
             </select>
             <button type="submit">Add Expense</button>
         </form>
-        <button id="payment-btn" class="membership" type="button">Buy Premium Membership</button>
+        <button id="payment-btn" class="membership" type="button" style="display: none;">Buy Premium Membership</button>
+        <div id="ifpremium">
+            <div id="premiumHeading" style="display: none;"><h2 >🌟 You are a Premium User! 🌟</h2></div>
+            <button id="leaderboard" class="leaderboard" type="button" style="display: none;">Leaderboard</button>
+        </div>
+        <div id="leaderHeading" style="display: none;"><h1>Leader Board:</h1></div>
+        <ul class="leaderboard-list"></ul>
+        <h1>Expenses:</h1>
         <ul class="list"></ul>
     </div>
-    <div id="cf-checkout"></div>
     <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.9.0/axios.min.js"></script>
     <script src="/js/expense.js"></script>

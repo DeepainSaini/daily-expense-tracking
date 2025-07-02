@@ -5,9 +5,9 @@ const authenticate = async (req,res,next) => {
 
     try{
         const token  = req.header('Authorization');
-        console.log(token);
+        console.log("token: ",token);
         const user = jwt.verify(token,'secretkey');
-        console.log(user);
+        console.log("user: ",user);
         await Users.findByPk(user.userId).then((user)=>{
             req.user = user;
             next();
@@ -15,7 +15,7 @@ const authenticate = async (req,res,next) => {
 
     }catch(error){
         console.log(error);
-        res.status(400).json({success : false});
+        res.status(400).json({status : false});
     }
 }
 
