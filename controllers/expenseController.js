@@ -1,6 +1,7 @@
 const db = require('../util/db-connection');
 const bcrypt = require('bcrypt');
 const Expenses = require('../models/expenses');
+const Users = require('../models/users');
 const path = require('path');
 
 const getExpensePage = (req,res) => {
@@ -18,7 +19,12 @@ const addExpense = async (req,res) => {
             category : category,
             userId : req.user.id
         }) 
+        console.log("EXPENSE",typeof(expense));
+        const user = await Users.findByPk(req.user.id);
+        user.totalExpense += parseInt(expense);
+        await user.save();
         res.status(200).json({message:'expense added',expnse});
+
     } catch(error){
         console.log(error);
         res.status(500).json({message:'expense not added'});
@@ -41,12 +47,14 @@ const deleteExpense = async (req,res) =>{
 
     try{
         const {id} = req.params;
-        const expense = await Expenses.destroy({
-            where : {
-                id : id,
-                userId : req.user.id
-            }
-        });
+        const expense = await Expenses.findByPk(id);
+        const user = await Users.findByPk(req.user.id);
+
+        if(expense.userId === req.user.id && user.id === req.user.id){
+            user.totalExpense -= expense.expense;
+            await user.save();
+            await expense.destroy();
+        }
 
         
         if (expense === 0) {

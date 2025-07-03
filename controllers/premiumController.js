@@ -10,23 +10,31 @@ const { group } = require('console');
 const getLeaderBoard = async (req,res) => {
 
     try{
-        const leaderBoardData = await Users.findAll({                                                          
+        // const leaderBoardData = await Users.findAll({                                                          
 
-            attributes : [
-                'name',
-                [sequelize.fn('SUM',sequelize.col('expenses.expense')),'totalExpense']      
-            ],
+        //     attributes : [
+        //         'name',
+        //         [sequelize.fn('SUM',sequelize.col('expenses.expense')),'totalExpense']      
+        //     ],
 
-            include : [{
-                model : Expenses,
-                attributes : [] //don't include full expense rows.
-            }],
+        //     include : [{
+        //         model : Expenses,
+        //         attributes : [] //don't include full expense rows.
+        //     }],
 
-            group : ['user.id'],
-            order : [[sequelize.literal('totalExpense'),'DESC']]
+        //     group : ['user.id'],
+        //     order : [[sequelize.literal('totalExpense'),'DESC']]
+        // });
+        
+        //to optimize this control we takes approach other then using groupby and joins .
+        const leaderBoardData = await Users.findAll({
+
+            attributes : ['name','totalExpense'],
+            order : [['totalExpense','DESC']]
         });
 
         res.status(200).json(leaderBoardData);
+
     } catch(error){
         console.error("Leaderboard error:", error);
         res.status(500).json({ message: "Something went wrong" });

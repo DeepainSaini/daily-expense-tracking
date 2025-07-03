@@ -114,6 +114,8 @@ document.getElementById('leaderboard').addEventListener('click',(event)=>{
     axios.get('http://localhost:3000'+"/premium/showLeaderBoard").then((result)=>{
 
         document.getElementById('leaderHeading').style.display = 'block';
+        document.querySelector('.leaderboard-list').innerHTML = '';  //empties previous list because when you click leaderboard button again same list appends to previous list .
+
        
         result.data.forEach(leaderBoardData => {
             displayLeaderBoard(leaderBoardData);
