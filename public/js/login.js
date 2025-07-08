@@ -39,3 +39,9 @@ function handleLogin(event){
     });
 
 }
+
+document.getElementById('forgot-btn').addEventListener('click',(event)=>{
+
+    event.preventDefault();
+    window.location.href = '/forgotPass';
+})

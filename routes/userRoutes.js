@@ -9,5 +9,6 @@ router.post('/signup',userController.postUserDetails);
 router.get('/login',userController.getLoginPage);
 router.post('/login',userController.getUserDetails);
 router.get('/premiumStatus',userAuthentication.authenticate,userController.getPremiumStatus);
+router.get('/forgotPass',userController.getForgotPassForm);
 
 module.exports = router;

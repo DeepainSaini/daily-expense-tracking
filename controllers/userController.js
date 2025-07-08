@@ -87,6 +87,11 @@ const getPremiumStatus = async (req,res) => {
     }
 }
 
+const getForgotPassForm = async (req,res) =>{
+
+    res.sendFile(path.join(__dirname,'../', 'views', 'forgotPass.html'));
+}
+
 
 
 module.exports = {
@@ -94,6 +99,7 @@ module.exports = {
     postUserDetails,
     getLoginPage,
     getUserDetails,
-    getPremiumStatus
+    getPremiumStatus,
+    getForgotPassForm
 
 }
