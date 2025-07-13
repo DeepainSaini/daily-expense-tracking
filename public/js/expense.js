@@ -137,6 +137,25 @@ function displayLeaderBoard(userDetails) {
 
     list.appendChild(user);
 }
+
+document.getElementById('download-btn').addEventListener('click',(event)=>{
+
+    axios.get('http://localhost:3000'+"/expense/download",{headers : {'Authorization' : token}}).then((result)=>{
+         
+        if(result.status === 201){
+            var a = document.createElement('a');
+            a.href = result.data.fileUrl;
+            a.download = 'expenses.csv';
+            a.click();
+        }
+        else{
+            throw new Error("result.data.message");
+        }
+    }).catch((err)=>{
+        console.log(err);
+    })
+         
+})
     
 
     
