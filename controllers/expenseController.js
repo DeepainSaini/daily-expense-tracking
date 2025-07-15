@@ -4,6 +4,7 @@ const Expenses = require('../models/expenses');
 const Users = require('../models/users');
 const sequelize = require('../util/db-connection');
 const path = require('path');
+const { off } = require('process');
 
 const getExpensePage = (req,res) => {
 
@@ -38,8 +39,27 @@ const addExpense = async (req,res) => {
 const getExpenseData = async (req,res) =>{
 
     try{
-        const expense = await Expenses.findAll({where : {userid : req.user.id}});
-        res.status(200).json(expense);
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5
+        const offset = (page-1)*limit;
+
+        const {count,rows : expenses} = await Expenses.findAndCountAll({
+            where : {userId : req.user.id},
+            limit : limit,
+            offset : offset,
+            order  : [['createdAt','DESC']]
+        });
+        
+        const totalPages = Math.ceil(count/limit);
+        res.status(200).json({
+            expenses : expenses,
+            currentPage : page,
+            totalPages : totalPages,
+            totalExpenses : count,
+            hasNextPage : page<totalPages,
+            hasPreviousPage : page>1
+        });
+
     } catch(error){
         console.log(error);
         res.status(500).json({message:'error while retrieving'});

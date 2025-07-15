@@ -1,14 +1,17 @@
 const form = document.querySelector('form');
 const token = localStorage.getItem('token');
+let currentPage = 1;
+const expenseLimit = 10;
 
 function checkPremiumStatus(){
     
     axios.get('http://localhost:3000'+"/premiumStatus",{headers : {'Authorization' : token}}).then((result)=>{
         
-        console.log(result);
+    
         if(result.data.isPremium){
             document.getElementById('premiumHeading').style.display = 'block';
             document.getElementById('leaderboard').style.display = 'block';
+            document.getElementById('download-btn').style.display = 'block';
             
             // document.getElementById('leaderboard').addEventListener('click',(event)=>{
 
@@ -30,19 +33,74 @@ function checkPremiumStatus(){
     });
 }
 
-window.addEventListener('DOMContentLoaded',(event)=>{
+function loadExpenses(page = 1) {
+    
+    const list = document.querySelector('.list');
+    list.innerHTML = '';
 
-    checkPremiumStatus();
-
-    axios.get('http://localhost:3000'+"/expense/data",{headers : {'Authorization' : token}}).then((result)=>{
-
-        result.data.forEach(expense => {
+    axios.get('http://localhost:3000'+`/expense/data?page=${page}&limit=${expenseLimit}`,{headers : {'Authorization' : token}}).then((result)=>{
+        
+        console.log("Expenses from backend:", result.data.expenses);
+        result.data.expenses.forEach(expense => {
             displayUserOnScreen(expense);
         });
+
+        showPagination(result.data);
+
     }).catch((err)=>{
         console.log(err);
     });
+}
+
+window.addEventListener('DOMContentLoaded',(event)=>{
+
+    checkPremiumStatus();
+    loadExpenses(1);
+
 })
+
+function showPagination(data) {
+
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
+
+    if(data.hasPreviousPage){
+        const prevBtn = document.createElement('button');
+        prevBtn.textContent = 'Previous';
+        prevBtn.className = 'pagination-btn';
+        prevBtn.addEventListener('click',()=>{
+            currentPage--;
+            loadExpenses(currentPage);
+        });
+        pagination.appendChild(prevBtn);
+    }
+
+    //page number
+    for(let i=1;i<=data.totalPages;i++){
+        const pageBtn = document.createElement('button');
+        pageBtn.textContent = i;
+        pageBtn.className = `pagination-btn ${i===currentPage ? 'active' : ''}`;
+        pageBtn.addEventListener('click',()=>{
+            currentPage = i;
+            loadExpenses(currentPage);
+        })
+        pagination.appendChild(pageBtn);
+    }
+
+    //next button
+    if(data.hasNextPage){
+        const nextBtn = document.createElement('button');
+        nextBtn.textContent = 'Next';
+        nextBtn.className = 'pagination-btn';
+        nextBtn.addEventListener('click',()=>{
+            currentPage++;
+            loadExpenses(currentPage);
+        });
+        pagination.appendChild(nextBtn);
+    }
+
+
+}
 
 form.addEventListener('submit',function(event){
    
@@ -62,7 +120,7 @@ form.addEventListener('submit',function(event){
     axios.post('http://localhost:3000'+"/expense",obj,{headers : {'Authorization' : token}}).then((result)=>{
         
         console.log(result.data.expnse);
-        displayUserOnScreen(result.data.expnse);
+        loadExpenses(currentPage);
 
     }).catch((err)=>{
             console.log(err);
@@ -99,7 +157,7 @@ function displayUserOnScreen(expenseDetails){
 
         const entryToDelete = event.target.parentElement.id;
         axios.delete('http://localhost:3000'+`/expense/${entryToDelete}`,{headers : {'Authorization' : token}}).then((result)=>{
-                list.removeChild(event.target.parentElement);
+                loadExpenses(currentPage);
         }).catch((err)=>{
             console.log(err);
         })
