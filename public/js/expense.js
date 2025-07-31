@@ -124,19 +124,24 @@ form.addEventListener('submit',function(event){
     event.preventDefault();
     const expense = event.target.amount.value;
     const description = event.target.description.value;
+    const note = event.target.note.value;
     const category = event.target.category.value;
+
+    console.log('Frontend - Note value:', note); // Debug log
+    console.log('Frontend - Note type:', typeof note); // Debug log
 
     const obj = {
         expense : expense,
         description : description,
+        note : note,
         category : category
     };
 
-    
+    console.log('Frontend - Sending object:', obj); // Debug log
     
     axios.post('http://localhost:3000'+"/expense",obj,{headers : {'Authorization' : token}}).then((result)=>{
         
-        console.log(result.data.expnse);
+        console.log('Backend response:', result.data.expnse);
         loadExpenses(currentPage);
 
     }).catch((err)=>{
@@ -145,6 +150,7 @@ form.addEventListener('submit',function(event){
 
     document.getElementById("amount").value = "";
     document.getElementById("description").value = "";
+    document.getElementById("note").value = "";
     document.getElementById("category").value = "";
 
 })
@@ -156,7 +162,7 @@ function displayUserOnScreen(expenseDetails){
 
     const expenseItem = document.createElement('li');
     expenseItem.className = "expense-group-item";
-    expenseItem.innerHTML = 'Rs.' + expenseDetails.expense + ' - ' + expenseDetails.description + ' - ' + expenseDetails.category;
+    expenseItem.innerHTML = 'Rs.' + expenseDetails.expense + ' - ' + expenseDetails.description + ' - ' + expenseDetails.note + ' - ' + expenseDetails.category;
     
     expenseItem.id = expenseDetails.id;
 

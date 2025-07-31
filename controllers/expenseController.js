@@ -15,12 +15,13 @@ const addExpense = async (req,res) => {
     
     const t = await sequelize.transaction();
     try{
-        const {expense,description,category} = req.body;
+        const {expense,description,note,category} = req.body;
         const expnse = await Expenses.create({
             expense : expense,
             description : description,
             category : category,
-            userId : req.user.id
+            userId : req.user.id,
+            note : note,
         },{transaction: t}) 
         console.log("EXPENSE",typeof(expense));
         const user = await Users.findByPk(req.user.id,{transaction: t});
