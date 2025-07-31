@@ -1,7 +1,7 @@
 const form = document.querySelector('form');
 const token = localStorage.getItem('token');
 let currentPage = 1;
-const expenseLimit = 10;
+let expenseLimit = parseInt(localStorage.getItem('expenseLimit')) || 10;
 
 function checkPremiumStatus(){
     
@@ -52,9 +52,26 @@ function loadExpenses(page = 1) {
     });
 }
 
+function initializePaginationSettings(){
+    const expensesPerPageSelect = document.getElementById('expensesPerPage');
+
+    expensesPerPageSelect.value = expenseLimit;
+
+    expensesPerPageSelect.addEventListener('change',function(){
+        const newLimit = parseInt(expensesPerPageSelect.value);
+        expenseLimit = newLimit;
+        currentPage = 1;
+
+        localStorage.setItem('expenseLimit',newLimit);
+
+        loadExpenses(currentPage);
+    })
+}
+
 window.addEventListener('DOMContentLoaded',(event)=>{
 
     checkPremiumStatus();
+    initializePaginationSettings();
     loadExpenses(1);
 
 })
@@ -157,7 +174,7 @@ function displayUserOnScreen(expenseDetails){
 
         const entryToDelete = event.target.parentElement.id;
         axios.delete('http://localhost:3000'+`/expense/${entryToDelete}`,{headers : {'Authorization' : token}}).then((result)=>{
-                loadExpenses(currentPage);
+                adjustPaginationAfterDelete();
         }).catch((err)=>{
             console.log(err);
         })
@@ -166,6 +183,15 @@ function displayUserOnScreen(expenseDetails){
    
 }
 
+function adjustPaginationAfterDelete(){
+    const currentListItems = document.querySelectorAll('.expense-group-item');
+
+    if(currentListItems.length === 1 && currentPage > 1){
+        currentPage--;
+    }
+
+    loadExpenses(currentPage);
+}
 
 document.getElementById('leaderboard').addEventListener('click',(event)=>{
 

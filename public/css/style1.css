@@ -22,6 +22,10 @@
     font-size: 16px;
     margin-top: 6px;
   }
+
+  .expense-group-item {
+    margin: 10px;
+  }
   
   
   input,
@@ -115,3 +119,39 @@
 #download-btn:hover {
   background-color: #218838;
 }
+
+.pagination-settings {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.pagination-settings label {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+  margin: 0;
+}
+
+.expenses-per-page-select {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1.5px solid #ccc;
+  border-radius: 5px;
+  background-color: white;
+  cursor: pointer;
+  min-width: 80px;
+}
+
+.expenses-per-page-select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+
