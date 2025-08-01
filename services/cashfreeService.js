@@ -1,6 +1,8 @@
 const { Cashfree, CFEnvironment } = require('cashfree-pg'); 
+const logger = require('../util/logger');
+require('dotenv').config();
 
-const cashfree = new Cashfree(CFEnvironment.SANDBOX, "TEST430329ae80e0f32e41a393d78b923034", "TESTaf195616268bd6202eeb3bf8dc458956e7192a85");
+const cashfree = new Cashfree(CFEnvironment.SANDBOX, `${process.env.CASHFREE_API_ID}`, `${process.env.CASHFREE_API_KEY}`);
 
 exports.createOrder = async (
     orderId,
@@ -40,7 +42,7 @@ exports.createOrder = async (
         return response.data.payment_session_id;
     } catch(error){
 
-        console.log(error);
+        logger.error(error);
     }
 }
 
@@ -63,7 +65,7 @@ exports.getPaymentStatus = async (orderId) => {
 
         return orderStatus;
     } catch(error){
-        console.log(error);
+        logger.error(error);
     }
 }
 

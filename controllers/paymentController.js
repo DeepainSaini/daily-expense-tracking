@@ -6,8 +6,9 @@ const Users = require('../models/users');
 const { createOrder,getPaymentStatus } = require('../services/cashfreeService');
 const sequelize = require('../util/db-connection');
 const path = require('path');
+const logger = require('../util/logger');
 const jwt = require('jsonwebtoken');
-
+require('dotenv').config();
 
 const processPayment = async (req,res) => {
 
@@ -17,7 +18,7 @@ const processPayment = async (req,res) => {
     const customerId = "1";
     const customerPhone = "9999999999";
     const token  = req.header('Authorization');
-    const decode = jwt.verify(token,'secretkey');
+    const decode = jwt.verify(token,`${process.env.JWT_KEY}`);
     const userId = decode.userId;
     
     const t = await sequelize.transaction();
@@ -47,7 +48,7 @@ const processPayment = async (req,res) => {
        res.json({paymentSessionId,orderId});
     
     } catch(error){
-        console.log(error);
+        logger.error(error);
         await t.rollback();
         res.status(500).json({message : "error processing payment"});
     }
@@ -79,7 +80,7 @@ const paymentStatus = async (req,res) => {
 
     } catch(error){
         await t.rollback();
-        console.log(error);
+        logger.error(error);
     }
 }
 
@@ -111,7 +112,7 @@ const handleWebhook = async (req,res) => {
         res.status(200).json({orderStatus : orderStatus.toLowerCase()});
 
     } catch(error){
-        console.error("Error in webhook:", error);
+        logger.error("Error in webhook:", error);
         await t.rollback();
         res.status(500).json({message : "Webhook processing error"});
     }

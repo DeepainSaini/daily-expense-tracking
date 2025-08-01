@@ -2,7 +2,9 @@ const db = require('../util/db-connection');
 const bcrypt = require('bcrypt');
 const Users = require('../models/users');
 const path = require('path');
+const logger = require('../util/logger');
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 const sequelize = require('../util/db-connection');
 
 const getSignUpPage =  (req,res) => {
@@ -34,7 +36,7 @@ const postUserDetails = async (req,res) =>{
         }
        
     }catch(error){
-        console.log(error);
+        logger.error(error);
         await t.rollback();
         res.status(500).json({ message: "Internal Server Error" });
     }
@@ -45,7 +47,7 @@ const getLoginPage = (req,res) => {
 }
 
 function generateAccessToken(id){
-    return jwt.sign({userId : id},'secretkey');
+    return jwt.sign({userId : id},`${process.env.JWT_KEY}`);
 }
 
 const getUserDetails = async (req,res) => {
@@ -67,7 +69,7 @@ const getUserDetails = async (req,res) => {
         res.status(200).json({message:"user found succcessfully",token : generateAccessToken(user.id)});
 
     }catch(error){
-         console.log(error);
+         logger.error(error);
          res.status(500).json({message:"internal server error"});
     }
 }
@@ -82,7 +84,7 @@ const getPremiumStatus = async (req,res) => {
 
 
     } catch(error){
-        console.log(error);
+        logger.error(error);
         res.status(500).json({message : "Internal server error"});
     }
 }

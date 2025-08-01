@@ -3,12 +3,14 @@ const bcrypt = require('bcrypt');
 const Users = require('../models/users');
 const Expenses = require('../models/expenses');
 const path = require('path');
+const logger = require('../util/logger');
 const jwt = require('jsonwebtoken');
 const sequelize = require('../util/db-connection');
 const { group } = require('console');
 
 const getLeaderBoard = async (req,res) => {
-
+       
+    const t = await sequelize.transaction();
     try{
         // const leaderBoardData = await Users.findAll({                                                          
 
@@ -30,13 +32,13 @@ const getLeaderBoard = async (req,res) => {
         const leaderBoardData = await Users.findAll({
 
             attributes : ['name','totalExpense'],
-            order : [['totalExpense','DESC']]
+            order : [['totalExpense','DESC']],
         });
 
         res.status(200).json(leaderBoardData);
 
     } catch(error){
-        console.error("Leaderboard error:", error);
+        logger.error("Leaderboard error:", error);
         res.status(500).json({ message: "Something went wrong" });
     }
     

@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const PasswordReq = require('../models/forgotPassRequests');
 const path = require('path');
+const logger = require('../util/logger');
 
 
 const handleForgotPassword = async (req,res) => {
@@ -28,8 +29,8 @@ const handleForgotPassword = async (req,res) => {
     try {
         await sendForgotPasswordEmail(email, resetLink);
         res.status(200).json({ message: 'Reset email sent' });
-    } catch (err) {
-        console.error(err);
+    } catch (error) {
+        logger.error(error);
         res.status(500).json({ message: 'Failed to send email' });
     }
 
@@ -50,7 +51,7 @@ const getResetPassForm = async (req,res) =>{
         res.sendFile(path.join(__dirname,'../','views','resetPass.html'));
 
     }catch(error){
-        console.error(err);
+        logger.error(error);
         res.status(500).json({ message: 'Failed to get reset password page' });
     }
     
@@ -84,7 +85,7 @@ const resetPassword = async (req,res) => {
         res.status(200).json({ message: 'Password reset successfully' });
 
     }catch(error){
-        console.log(error);
+        logger.error(error);
         await t.rollback();
         res.status(500).json({message : "cannot update password"})
     }

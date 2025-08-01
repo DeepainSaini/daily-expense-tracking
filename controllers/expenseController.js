@@ -4,6 +4,7 @@ const Expenses = require('../models/expenses');
 const Users = require('../models/users');
 const sequelize = require('../util/db-connection');
 const path = require('path');
+const logger = require('../util/logger');
 const { off } = require('process');
 
 const getExpensePage = (req,res) => {
@@ -31,7 +32,7 @@ const addExpense = async (req,res) => {
         res.status(200).json({message:'expense added',expnse});
 
     } catch(error){
-        console.log(error);
+        logger.error(error);
         await t.rollback()
         res.status(500).json({message:'expense not added'});
     }
@@ -62,7 +63,7 @@ const getExpenseData = async (req,res) =>{
         });
 
     } catch(error){
-        console.log(error);
+        logger.error(error);
         res.status(500).json({message:'error while retrieving'});
     }
 
@@ -92,7 +93,7 @@ const deleteExpense = async (req,res) =>{
         res.status(200).json({message:'entry deleted successfully'});
 
     } catch(error){
-        console.log(error);
+        logger.error(error);
         await t.rollback();
         res.status(500).json({message:'entry deleting failed'});
     }
