@@ -7,5 +7,6 @@ router.get('/expense',expenseController.getExpensePage);
 router.post('/expense',userAuthentication.authenticate,expenseController.addExpense);
 router.get('/expense/data',userAuthentication.authenticate,expenseController.getExpenseData);
 router.delete('/expense/:id',userAuthentication.authenticate,expenseController.deleteExpense);
+router.get('/expense/fileUrls',userAuthentication.authenticate,expenseController.getFileUrls);
 
 module.exports = router;

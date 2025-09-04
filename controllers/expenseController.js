@@ -2,14 +2,62 @@ const db = require('../util/db-connection');
 const bcrypt = require('bcrypt');
 const Expenses = require('../models/expenses');
 const Users = require('../models/users');
+const FileUrls = require('../models/fileUrl');
 const sequelize = require('../util/db-connection');
+const AWS = require('aws-sdk');
 const path = require('path');
 const logger = require('../util/logger');
 const { off } = require('process');
+const USerServices = require('../services/userServices');
+const S3Services = require('../services/s3Services');
 
 const getExpensePage = (req,res) => {
 
     res.sendFile(path.join(__dirname,'../','views','expense.html'));
+}
+
+
+const downloadExpenses = async (req,res) => {
+    
+    const t = await sequelize.transaction();
+    try{
+        const expense = await USerServices.getExpenses(req,{transaction:t});
+        console.log(expense);
+        const stringifiedExpenses = JSON.stringify(expense);
+        const userId = req.user.id;
+        const filename = `Expense${userId}/${new Date()}.txt`;
+        const fileUrl = await S3Services.uploadToS3(stringifiedExpenses,filename,{transaction:t});
+        await FileUrls.create({
+            fileurl : fileUrl,
+            userId : req.user.id
+        },{transaction:t})
+        await t.commit();
+        res.status(200).json({fileUrl,success:true});
+    } catch(error){
+        await t.rollback();
+        res.status(500).json({fileUrl:'',success:false,error:error})
+    }
+}
+
+const getFileUrls = async (req,res) => {
+    
+    const t = await sequelize.transaction();
+
+    try{
+        const fileUrls = await FileUrls.findAll({
+            where : {userId : req.user.id},
+            order: [['createdAt', 'DESC']]
+        },{transaction:t});
+        await t.commit();
+        res.status(200).json({
+            fileUrls : fileUrls
+        })
+    }catch(error){
+        logger.error(error);
+        await t.rollback();
+        res.status(500).json({message:"something went wrong"});
+    }
+    
 }
 
 const addExpense = async (req,res) => {
@@ -104,5 +152,7 @@ module.exports = {
     getExpensePage,
     addExpense,
     getExpenseData,
-    deleteExpense
+    deleteExpense,
+    downloadExpenses,
+    getFileUrls
 }

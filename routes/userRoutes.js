@@ -1,5 +1,6 @@
 const express = require('express');
 const userController = require('../controllers/userController');
+const expenseController = require('../controllers/expenseController')
 const userAuthentication = require('../middlewares/auth');
 const router = express.Router();
 
@@ -10,5 +11,6 @@ router.get('/login',userController.getLoginPage);
 router.post('/login',userController.getUserDetails);
 router.get('/premiumStatus',userAuthentication.authenticate,userController.getPremiumStatus);
 router.get('/forgotPass',userController.getForgotPassForm);
+router.get('/expense/download',userAuthentication.authenticate,expenseController.downloadExpenses);
 
 module.exports = router;

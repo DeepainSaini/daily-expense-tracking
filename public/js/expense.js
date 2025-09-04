@@ -68,12 +68,31 @@ function initializePaginationSettings(){
     })
 }
 
+function loadFileUrls(){
+
+    const fileUrlsList = document.querySelector('.file-urls-list');
+    fileUrlsList.innerHTML = '';
+    axios.get('http://localhost:3000'+"/expense/fileUrls",{headers : {'Authorization' : token}})
+    .then((result)=>{
+        result.data.fileUrls.forEach(fileUrl =>{
+            const fileUrlItem = document.createElement('li');
+            fileUrlItem.innerHTML = 'File Url : ' + fileUrl.fileurl;
+            fileUrlItem.className = 'file-url-item';
+            console.log("Element classes:", fileUrlItem.className);
+            console.log("Element:", fileUrlItem);
+            fileUrlsList.appendChild(fileUrlItem);
+        })
+    }).catch((err)=>{
+        console.log(err);
+    })
+}
+
 window.addEventListener('DOMContentLoaded',(event)=>{
 
     checkPremiumStatus();
     initializePaginationSettings();
     loadExpenses(1);
-
+    loadFileUrls();
 })
 
 function showPagination(data) {
@@ -232,17 +251,19 @@ document.getElementById('download-btn').addEventListener('click',(event)=>{
 
     axios.get('http://localhost:3000'+"/expense/download",{headers : {'Authorization' : token}}).then((result)=>{
          
-        if(result.status === 201){
+        if(result.status === 200){
             var a = document.createElement('a');
             a.href = result.data.fileUrl;
             a.download = 'expenses.csv';
             a.click();
+            
+            loadFileUrls();
         }
         else{
-            throw new Error("result.data.message");
+            console.error("Download failed:", result.data.message || result.data.error);
         }
     }).catch((err)=>{
-        console.log(err);
+        console.log("Network or other error:", err);
     })
          
 })
