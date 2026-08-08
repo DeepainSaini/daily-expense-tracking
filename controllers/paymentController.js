@@ -17,9 +17,14 @@ const processPayment = async (req,res) => {
     const orderCurrency = "INR";
     const customerId = "1";
     const customerPhone = "9999999999";
+
+    const authHeader = req.header('Authorization');
+    console.log("Authorizationnnnnnnnnnnnnnnnn Header:", req.headers.authorization);
     const token  = req.header('Authorization');
     const decode = jwt.verify(token,`${process.env.JWT_KEY}`);
+    console.log("USERRRRRRRRRRRR IDDDDDDDDDDD ",decode);
     const userId = decode.userId;
+    
     
     const t = await sequelize.transaction();
     try{
@@ -32,7 +37,7 @@ const processPayment = async (req,res) => {
             customerPhone
         );
 
-        console.log(paymentSessionId);
+        console.log("paymennnnnnttttt",paymentSessionId);
 
        //save payment details into database.
        await Payments.create({

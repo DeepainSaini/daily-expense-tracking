@@ -18,7 +18,8 @@ function handleLogin(event){
         event.target.password.value = "";
         localStorage.setItem('token', result.data.token);
 
-        window.location.href = "/expense";
+       window.location.href = "/expense";
+
     }).catch((error)=>{
          if(error.response.data.message === "user not found"){
             errorDiv.textContent = "User Not Exist";

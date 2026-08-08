@@ -2,18 +2,20 @@ const { Cashfree, CFEnvironment } = require('cashfree-pg');
 const logger = require('../util/logger');
 require('dotenv').config();
 
-const cashfree = new Cashfree(CFEnvironment.SANDBOX, `${process.env.CASHFREE_API_ID}`, `${process.env.CASHFREE_API_KEY}`);
+
+
+const cashfree = new Cashfree(CFEnvironment.SANDBOX, `${process.env.CASHFREE_APP_ID}`, `${process.env.CASHFREE_SECRET_KEY}`);
 
 exports.createOrder = async (
     orderId,
     orderAmount,
-    orderCurrency="IND",
+    orderCurrency="INR",
     customerId,
     customerPhone
 ) => {
 
     try{
-       
+        console.log('CFffffffffffff keyssssssss loaded:', process.env.CASHFREE_API_ID, process.env.CASHFREE_API_KEY);
         const expiryDate = new Date(Date.now() + 60*60*1000);
         const formattedExpiryDate = expiryDate.toISOString();
 
@@ -31,7 +33,7 @@ exports.createOrder = async (
 
             "order_meta": {
                 "return_url": `http://localhost:3000/payment-status/${orderId}`,
-                "notify_url": "https://9e07-223-185-54-74.ngrok-free.app/webhook/cashfree",
+                // "notify_url": "https://9e07-223-185-54-74.ngrok-free.app/webhook/cashfree",
                 "payment_methods": "cc,dc,upi"
             },
             
@@ -42,7 +44,8 @@ exports.createOrder = async (
         return response.data.payment_session_id;
     } catch(error){
 
-        logger.error(error);
+        logger.error('Cashfree create order failed:', error.response?.data || error.message);
+        throw new Error(error.message || "Cashfree order creation failed");
     }
 }
 

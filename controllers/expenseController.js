@@ -12,7 +12,7 @@ const USerServices = require('../services/userServices');
 const S3Services = require('../services/s3Services');
 
 const getExpensePage = (req,res) => {
-
+    
     res.sendFile(path.join(__dirname,'../','views','expense.html'));
 }
 

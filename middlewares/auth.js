@@ -6,7 +6,10 @@ require('dotenv').config();
 const authenticate = async (req,res,next) => {
 
     try{
-        const token  = req.header('Authorization');
+        const token  = req.cookies.token || req.header('Authorization');
+        if(!token){
+            return res.redirect('/login');
+        }
         console.log("token: ",token);
         const user = jwt.verify(token,`${process.env.JWT_KEY}`);
         console.log("user: ",user);

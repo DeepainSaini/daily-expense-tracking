@@ -19,10 +19,12 @@ const handleForgotPassword = async (req,res) => {
     }
 
     const id = uuidv4();
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
     await PasswordReq.create({
         id,
         userId : user.id,
-        isactive : true
+        isactive : true,
+        expiresAt : expiresAt
     });
     const resetLink = `http://localhost:3000/called/reset-password/${id}`;
 

@@ -13,7 +13,14 @@ const PasswordReq = sequelize.define('passswordReq',{
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: true,
+      },
+      expiresAt: {
+        type: DataTypes.DATE,
+        allowNull: false
       }
+      
+},{
+  timestamps: false
 })
 
 module.exports = PasswordReq;

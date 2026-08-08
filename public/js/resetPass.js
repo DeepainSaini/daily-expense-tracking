@@ -9,6 +9,7 @@ document.getElementById('resetForm').addEventListener('submit',(event)=>{
     axios.post('http://localhost:3000'+`/called/reset-password/${uuid}`,{newPassword}).then((res)=>{
        
         event.target.newPassword.value = "";
+        window.location.replace('/login'); 
         console.log(res.data);
        
     }).catch((err)=>{

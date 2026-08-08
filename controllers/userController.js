@@ -31,7 +31,6 @@ const postUserDetails = async (req,res) =>{
             res.status(201).json({message:"user created successfully",user});
         }
         else{
-            await t.rollback();
             res.status(409).json({message:"email already exists"});
         }
        
@@ -47,7 +46,7 @@ const getLoginPage = (req,res) => {
 }
 
 function generateAccessToken(id){
-    return jwt.sign({userId : id},`${process.env.JWT_KEY}`);
+    return jwt.sign({userId : id},`${process.env.JWT_KEY}`, { expiresIn: '24h' });
 }
 
 const getUserDetails = async (req,res) => {
@@ -65,8 +64,17 @@ const getUserDetails = async (req,res) => {
         if(!isMatch){
             return res.status(401).json({message:"Incorrect Password"});
         }
+
+        const token = generateAccessToken(user.id);
+        res.cookie('token', token, { 
+            httpOnly: true,          
+            secure: false,    
+            // path : '/',        
+            maxAge: 24 * 60 * 60 * 1000, 
+            sameSite: 'lax'      
+        });
         
-        res.status(200).json({message:"user found succcessfully",token : generateAccessToken(user.id)});
+        res.status(200).json({message:"user found succcessfully", token});
 
     }catch(error){
          logger.error(error);
@@ -78,6 +86,9 @@ const getPremiumStatus = async (req,res) => {
 
     try{
         console.log("USER:",req.user);
+        if(!req.user){
+            return res.sendFile(path.join(__dirname,'../','views','signup.html'));
+        }
         const isPremium = req.user.isPremium;
 
         res.status(200).json({isPremium : isPremium});
@@ -94,6 +105,25 @@ const getForgotPassForm = async (req,res) =>{
     res.sendFile(path.join(__dirname,'../', 'views', 'forgotPass.html'));
 }
 
+const userLogout = async (req,res) => {
+
+    try{
+
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: false,
+            // path : '/',
+            sameSite: "lax"
+        });
+        res.status(200).json({ message: "Logged out successfully" });
+
+    }catch(error){
+
+        logger.error(error);
+        res.status(500).json({message : "Internal server error"});
+    }
+}
+
 
 
 module.exports = {
@@ -102,6 +132,7 @@ module.exports = {
     getLoginPage,
     getUserDetails,
     getPremiumStatus,
-    getForgotPassForm
+    getForgotPassForm,
+    userLogout
 
 }

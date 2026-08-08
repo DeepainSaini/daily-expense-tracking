@@ -267,6 +267,18 @@ document.getElementById('download-btn').addEventListener('click',(event)=>{
     })
          
 })
+
+document.getElementById('logout-btn').addEventListener('click',(event)=>{
+    
+    event.preventDefault();
+    axios.post('http://localhost:3000'+"/logout",{},{headers : {'Authorization' : token}}).then((result)=>{
+        
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+    }).catch((error)=>{
+        console.log(error);
+    })
+})
     
 
     
